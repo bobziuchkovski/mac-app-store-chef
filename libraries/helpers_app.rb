@@ -71,8 +71,11 @@ module MacAppStore
         # @return [String] the app's corresponding ID
         #
         def app_id_for?(name)
+          Chef::Log.info("name: #{name}")
           search = shell_out("mas search '#{name}'", user: user).stdout
           app_line = search.lines.find do |l|
+            Chef::Log.info("line: #{l}")
+            Chef::Log.info("l.rstrip.split(' ')[1..-1].join(' '): #{l.rstrip.split(' ')[1..-1].join(' ')}")
             l.rstrip.split(' ')[1..-1].join(' ') == name
           end
           app_line && app_line.split(' ')[0]
