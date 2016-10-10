@@ -70,15 +70,22 @@ module MacAppStore
         #
         # @return [String] the app's corresponding ID
         #
+        def bin_to_hex(s)
+          s.each_byte.map { |b| b.to_s(16) }.join(' ')
+        end
+
         def app_id_for?(name)
-          Chef::Log.info("name: #{name}")
+          Chef::Log.info("name: #{bin_to_hex name}")
           search = shell_out("mas search '#{name}'", user: user).stdout
           app_line = search.lines.find do |l|
-            Chef::Log.info("line: #{l}")
-            Chef::Log.info("l.rstrip.split(' ')[1..-1].join(' '): #{l.rstrip.split(' ')[1..-1].join(' ')}")
+            Chef::Log.info("line: #{bin_to_hex l}")
+            Chef::Log.info("l.rstrip.split(' ')[1..-1].join(' '): #{bin_to_hex l.rstrip.split(' ')[1..-1].join(' ')}")
             l.rstrip.split(' ')[1..-1].join(' ') == name
           end
-          app_line && app_line.split(' ')[0]
+          app_id = app_line && app_line.split(' ')[0]
+          Chef::Log.info("app_line: #{app_line}")
+          Chef::Log.info("app_id: #{app_id}")
+          app_id
         end
       end
     end
